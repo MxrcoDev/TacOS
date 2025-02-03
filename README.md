@@ -1,4 +1,4 @@
-![header](https://capsule-render.vercel.app/api?type=waving&height=230&color=gradient&customColorList=69&text=TacOS&textBg=false&fontAlignY=40&reversal=false&animation=fadeIn)
+![header](https://capsule-render.vercel.app/api?type=waving&height=230&color=gradient&customColorList=23&text=TacOS&textBg=false&fontAlignY=40&reversal=false&animation=fadeIn)
 # 🌮 TacOS - A Tiny OS Simulation in Assembly 8086
 
 Welcome to **TacOS**! 🎉 A small operating system simulation written in **Assembly 8086**. 🏗️ Designed for educational purposes, it helps to understand low-level programming. 💻
