@@ -16,12 +16,13 @@ data segment
          db "", 13, 10, "$"
     
     welcome db "", 13, 10
-            db "         Benvenuto su tacOS v3.1       ", 13, 10
+            db "         Benvenuto su tacOS v7.8       ", 13, 10
             db "      Sviluppato da Marco Gavioli, 3D    ", 13, 10
             db "  Digita 'help' per maggiori informazioni  ", 13, 10  
             db "", 13, 10
             db "", 13, 10, "$"
     newline db " ", 13, 10, "$"
+    space   db " $"
             
     ; Messaggi di sistema
     login db 13, 10, "> Per utilizzare tacOS, effettua il login.", 13, 10, "$"
@@ -93,7 +94,11 @@ data segment
     error_msg db 13, 10              
               db 13, 10
               db 13, 10                
-              db "    Errore! Divisione per zero.$" 
+              db "    Errore! Divisione per zero.$"
+    espneg_msg db 13, 10              
+              db 13, 10
+              db 13, 10                
+              db "    Errore! Math error.$"  
             
     
     ; Memoria
@@ -108,6 +113,7 @@ data segment
     num2 dw 0
     result dw 0
     decimal_part dw 0
+    calc_buff db 10 dup(0)
     
     
     ; Stringhe comandi
@@ -763,7 +769,7 @@ input_loop:
     cmp al, 8       ; Se BACKSPACE
     je gestisci_backspace
     
-    cmp al, '0'     ; Verifica se è un numero
+    cmp al, '0'     ; Verifica se Ã¨ un numero
     jb input_loop
     cmp al, '9'
     ja input_loop
@@ -791,7 +797,7 @@ input_loop:
     cmp ax, word ptr [saldo]
     ja input_loop
     
-    ; Se arriviamo qui, il numero è valido
+    ; Se arriviamo qui, il numero Ã¨ valido
     mov bx, ax      ; Aggiorna la puntata accumulata
     
     ; Mostra il carattere originale
@@ -864,9 +870,9 @@ place_mine:
     mov dx, 0
     mov bx, 25           ; Dividi per 25 per ottenere un numero tra 0 e 24
     div bx
-    ; Il resto è in DX
+    ; Il resto Ã¨ in DX
     
-    ; Verifica se c'è già una mina in quella posizione
+    ; Verifica se c'Ã¨ giÃ  una mina in quella posizione
     mov di, dx
     cmp mine[di], 1
     je skip_mine         ; Se c'e' gia' una mina, riprova
@@ -937,11 +943,11 @@ aggiorna_schermo proc
         mov ah, 02h
         int 10h
         
-        ; Verifica se la casella è aperta
+        ; Verifica se la casella Ã¨ aperta
         cmp caselle_aperte[di], 1
         jne skip_x
         
-        ; Disegna X se la casella è aperta
+        ; Disegna X se la casella Ã¨ aperta
         mov ah, 02h
         mov dl, 'X'
         int 21h
@@ -969,17 +975,18 @@ aggiorna_schermo endp
 
 ; --- GESTIONE DELLA CALCOLATRICE ---
 comando_calc:
-    ; Pulisci lo schermo e il registro flag di  
+    ; Pulisci lo schermo 
     call cls
     push di
     
+calc_menu:
     ; Mostra il messaggio 
     lea dx, calc_msg
     mov ah, 9
     int 21h
     
     ; Attendi l'input
-    mov ah,8
+    mov ah, 8
     int 21h
     
     ; Se viene inserito CTRL+C, esci dalla calcolatrice
@@ -1005,7 +1012,7 @@ comando_calc:
     cmp al, 7
     je logaritmo
     
-    ; Se l'input non è valido, torna al main
+    ; Se l'input non Ã¨ valido, torna al main
     jmp main
 
 somma:
@@ -1039,10 +1046,6 @@ somma:
     
     mov ax, result
     call mostra_numero
-    
-    lea dx, pkey
-    mov ah, 9
-    int 21h
     
     ; Attendi un tasto
     mov ah, 7
@@ -1082,10 +1085,6 @@ sottrazione:
     mov ax, result
     call mostra_numero
     
-    lea dx, pkey
-    mov ah, 9
-    int 21h
-    
     ; Attendi un tasto
     mov ah, 7
     int 21h
@@ -1100,7 +1099,7 @@ moltiplicazione:
     
     ; Leggi primo numero
     call leggi_numero
-    mov num1, ax                            
+    mov num1, ax
     
     ; Chiedi secondo numero
     lea dx, num2_msg
@@ -1124,10 +1123,6 @@ moltiplicazione:
     
     mov ax, result
     call mostra_numero
-    
-    lea dx, pkey
-    mov ah, 9
-    int 21h
     
     ; Attendi un tasto
     mov ah, 7
@@ -1159,11 +1154,10 @@ divisione:
     je errore_div_zero
     
     ; Calcola divisione
-    mov dx, 0
     mov ax, num1
-    div num2
+    cwd             ; Converte word in double word con segno
+    idiv num2       ; Divisione con segno
     mov result, ax
-    mov decimal_part, dx
     
     ; Mostra risultato
     lea dx, result_msg
@@ -1173,10 +1167,6 @@ divisione:
     mov ax, result
     call mostra_numero
     
-    lea dx, pkey
-    mov ah, 9
-    int 21h
-    
     ; Attendi un tasto
     mov ah, 7
     int 21h
@@ -1185,10 +1175,6 @@ divisione:
 
 errore_div_zero:
     lea dx, error_msg
-    mov ah, 9
-    int 21h
-    
-    lea dx, pkey
     mov ah, 9
     int 21h
     
@@ -1215,6 +1201,11 @@ potenza:
     
     ; Leggi esponente
     call leggi_numero
+    
+    ; Verifica che l'esponente sia positivo
+    test ax, ax
+    js errore_esp_neg
+    
     mov num2, ax
     
     ; Calcola potenza
@@ -1240,10 +1231,6 @@ fine_potenza:
     mov ax, result
     call mostra_numero
     
-    lea dx, pkey
-    mov ah, 9
-    int 21h
-    
     ; Attendi un tasto
     mov ah, 7
     int 21h
@@ -1258,6 +1245,11 @@ radice:
     
     ; Leggi numero
     call leggi_numero
+    
+    ; Verifica che il numero sia positivo
+    test ax, ax
+    js errore_esp_neg
+    
     mov num1, ax
     
     ; Calcola radice quadrata usando il metodo babilonese
@@ -1294,10 +1286,6 @@ radice_loop:
     mov ax, result
     call mostra_numero
     
-    lea dx, pkey
-    mov ah, 9
-    int 21h
-    
     ; Attendi un tasto
     mov ah, 7
     int 21h
@@ -1312,6 +1300,11 @@ logaritmo:
     
     ; Leggi numero
     call leggi_numero
+    
+    ; Verifica che il numero sia positivo
+    test ax, ax
+    js errore_esp_neg
+    
     mov num1, ax
     
     ; Calcola logaritmo naturale approssimato
@@ -1336,7 +1329,14 @@ fine_logaritmo:
     mov ax, result
     call mostra_numero
     
-    lea dx, pkey
+    ; Attendi un tasto
+    mov ah, 7
+    int 21h
+    
+    jmp comando_calc 
+
+errore_esp_neg:
+    lea dx, espneg_msg
     mov ah, 9
     int 21h
     
@@ -1351,40 +1351,114 @@ leggi_numero proc
     push bx
     push cx
     push dx
+    push si
     
     xor bx, bx      ; Azzera risultato
     mov cx, 10      ; Moltiplicatore
+    xor di, di      ; Flag per il segno (0 = positivo, 1 = negativo)
     
-leggi_cifra:
+    xor si, si      ; Azzeriamo il contatore
+    
+    ; Leggi primo carattere per verificare se Ã¨ un segno meno
     mov ah, 1
     int 21h
     
-    cmp al, 13      ; Se ENTER, termina
+    cmp al, '-'     ; Controlla se Ã¨ un segno meno
+    jne non_negativo
+    mov di, 1       ; Imposta flag negativo
+    jmp leggi_cifra
+    
+non_negativo:
+    cmp al, 13      ; Se e' invio, termina
     je fine_lettura
     
+    cmp al, 8       ; Se e' backspace, stampa spazio e ricomincia la lettura
+    je first_back
+    
     sub al, '0'     ; Converti da ASCII a numero
-    xor ah, ah
+    xor ah, ah      ; Pulisci AH
     push ax         ; Salva cifra
     
     mov ax, bx      ; Moltiplica numero corrente per 10
-    mul cx
+    mul cx          ; AX = AX * CX
+    mov bx, ax
+    
+    pop ax          ; Recupera cifra
+    add bx, ax      ; Aggiungi cifra al numero
+    
+    
+    inc si          ; Incrementa il contatore dei caratteri
+    
+leggi_cifra:
+    mov ah, 8
+    int 21h
+    
+    cmp al, 13      ; Se ENTER, termina
+    je fine_lettura 
+    
+    cmp al, 8       ; Se e' backspace
+    je handler_calc
+    
+    inc si          ; Incrementa il contatore dei caratteri
+    
+    mov dl, al
+    mov ah, 2
+    int 21h
+    
+    sub al, '0'     ; Converti da ASCII a numero
+    xor ah, ah      ; Pulisci AH
+    push ax         ; Salva cifra
+    
+    mov ax, bx      ; Moltiplica numero corrente per 10
+    mul cx          ; AX = AX * CX
     mov bx, ax
     
     pop ax          ; Recupera cifra
     add bx, ax      ; Aggiungi cifra al numero
     
     jmp leggi_cifra
+
+handler_calc:
+    cmp si, 0
+    je leggi_cifra
     
-fine_lettura:
-    mov ax, bx      ; Sposta risultato in AX
+    lea dx, backspace
+    mov ah, 9
+    int 21h
+    
+    dec si
+    
+    jmp leggi_cifra
+
+first_back:
+    lea dx, space
+    mov ah, 9
+    int 21h
     
     pop dx
     pop cx
     pop bx
+    pop si
+    
+    jmp leggi_numero
+        
+fine_lettura:
+    mov ax, bx      ; Sposta risultato in AX
+    
+    ; Se il flag negativo Ã¨ impostato, nega il numero usando NEG
+    cmp di, 1
+    jne fine_proc
+    neg ax          ; Converte in negativo
+    
+fine_proc:
+    pop dx
+    pop cx
+    pop bx
+    pop si
     ret
 leggi_numero endp
 
-; Procedure per mostrare un numero
+; Procedure per mostrare un numero con supporto numeri negativi
 mostra_numero proc
     push ax
     push bx
@@ -1394,6 +1468,19 @@ mostra_numero proc
     mov bx, 10      ; Divisore
     xor cx, cx      ; Contatore cifre
     
+    ; Controlla se il numero Ã¨ negativo
+    test ax, ax
+    jns non_stampa_meno
+    
+    ; Stampa il segno meno e nega il numero
+    push ax
+    mov dl, '-'
+    mov ah, 2
+    int 21h
+    pop ax
+    neg ax          ; Rendi il numero positivo usando NEG
+    
+non_stampa_meno:
     ; Gestisci caso speciale numero = 0
     cmp ax, 0
     jne dividi_numero
@@ -1405,8 +1492,8 @@ dividi_numero:
     cmp ax, 0
     je mostra_cifre
     
-    xor dx, dx
-    div bx          ; Dividi per 10
+    cwd             ; Converti word in double word (AX -> DX:AX)
+    idiv bx         ; Divisione con segno
     push dx         ; Salva resto (cifra)
     inc cx          ; Incrementa contatore
     jmp dividi_numero
@@ -1703,7 +1790,7 @@ compare_loop:
     mov al, [si]
     mov bl, [di]
     
-    ; Se entrambi i caratteri sono 0 o spazio, è un match
+    ; Se entrambi i caratteri sono 0 o spazio, Ã¨ un match
     cmp bl, 0
     je check_end_or_space
     
@@ -1716,7 +1803,7 @@ compare_loop:
     jmp compare_loop
     
 check_end_or_space:
-    ; Verifica se il carattere corrente è uno spazio o fine stringa
+    ; Verifica se il carattere corrente Ã¨ uno spazio o fine stringa
     cmp al, 0
     je strings_equal
     cmp al, ' '
