@@ -36,10 +36,10 @@ The calculator supports operations with positive and negative numbers:
 - 💥 **Warning!** If you trigger one of the **3 randomly placed mines**, **you lose everything!**
 
 ## 📸 Screenshots
-![img](.github/workflows/img1)
-![img](.github/workflows/img2)
-![img](.github/workflows/img3)
-![img](.github/workflows/img4)
-![img](.github/workflows/img5)
+![img](.github/workflows/img1.png)
+![img](.github/workflows/img2.png)
+![img](.github/workflows/img3.png)
+![img](.github/workflows/img4.png)
+![img](.github/workflows/img5.png)
 
 🔧 **TacOS is an open-source project!** Contribute and have fun with low-level development! 🚀
