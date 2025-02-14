@@ -4,7 +4,7 @@ data segment
     pkey db " ", 13, 10
          db "Premi qualsiasi tasto per continuare...$"
     
-    ; Messaggi LUMA OS
+    ; MESSAGGI DI SISTEMA
     logo db "    +---------------------------------+", 13, 10
          db "    |   _____                     _   |", 13, 10
          db "    |  |_   _|_ _  ___ ___  ___  | |  |", 13, 10
@@ -16,15 +16,14 @@ data segment
          db "", 13, 10, "$"
     
     welcome db "", 13, 10
-            db "         Benvenuto su tacOS v7.8       ", 13, 10
-            db "      Sviluppato da Marco Gavioli, 3D    ", 13, 10
+            db "         Benvenuto su tacOS v8.1       ", 13, 10
+            db "       Sviluppato da MxrcoDev, 3D.    ", 13, 10
             db "  Digita 'help' per maggiori informazioni  ", 13, 10  
             db "", 13, 10
-            db "", 13, 10, "$"
+            db "        github.com/MxrcoDev/TacOS", 13, 10, "$"
     newline db " ", 13, 10, "$"
     space   db " $"
             
-    ; Messaggi di sistema
     login db 13, 10, "> Per utilizzare tacOS, effettua il login.", 13, 10, "$"
     usermsg db 13, 10, "NOME UTENTE: $"
     pwdmsg db 13, 10, "PASSWORD: $"
@@ -50,11 +49,13 @@ data segment
                 db " ", 13, 10, "$"
     help_msg    db " ", 13, 10
                 db 13, 10, "Lista dei comandi:", 13, 10
-                db 13, 10, "help  --> Mostra la lista dei comandi", 13, 10
-                db "exit  --> Torna alla schermata di login", 13, 10
-                db "pwd   --> Cambia password", 13, 10
-                db "cls   --> Pulisci lo schermo", 13, 10
-                db "calc  --> Apri la calcolatrice", 13, 10
+                db 13, 10, "help       --> Mostra la lista dei comandi", 13, 10
+                db "exit       --> Torna alla schermata di login", 13, 10
+                db "pwd        --> Cambia password", 13, 10
+                db "cls        --> Pulisci lo schermo", 13, 10
+                db "calc       --> Apri la calcolatrice", 13, 10
+                db "mines      --> Apri il gioco 'mines'", 13, 10
+                db "shutdown   --> Spegni il sistema", 13, 10
                 db " ", 13, 10, "$"
     
     calc_msg    db "", 13, 10
@@ -74,7 +75,7 @@ data segment
                 db "4. Divisione", 13, 10
                 db "5. Potenza", 13, 10
                 db "6. Radice quadrata", 13, 10
-                db "7. Logaritmo naturale in base 2", 13, 10
+                db "7. Logaritmo in base 2", 13, 10
                 db " ", 13, 10,
                 db "Quale operazione vuoi eseguire? (Digita il numero)$" 
     
@@ -95,17 +96,17 @@ data segment
               db 13, 10
               db 13, 10                
               db "    Errore! Divisione per zero.$"
-    espneg_msg db 13, 10              
+    neg_msg   db 13, 10              
               db 13, 10
               db 13, 10                
               db "    Errore! Math error.$"  
             
     
-    ; Memoria
-    username db 20 dup(0)    ; Buffer per username
-    password db 20 dup(0)    ; Buffer per password
-    new_password db 20 dup(0)    ; Buffer per nuova password
-    confirm_password db 20 dup(0) ; Buffer per conferma password
+    ; MEMORIA
+    username db 20 dup(0)    
+    password db 20 dup(0)    
+    new_password db 20 dup(0)    
+    confirm_password db 20 dup(0)
     cmd_buffer   db 50 dup(0)
     cmd_size     db 0
     
@@ -116,23 +117,29 @@ data segment
     calc_buff db 10 dup(0)
     
     
-    ; Stringhe comandi
+    ; COMMAND HANDLER
+    ;
+    ;-----------------
     help_cmd     db "help", 0
     exit_cmd     db "exit", 0
     pwd_cmd      db "pwd", 0
     cls_cmd      db "cls", 0
     calc_cmd     db "calc", 0
     mines_cmd    db "mines", 0
+    shutdown_cmd db "shutdown", 0  
+    ; aggiungi qui i tuoi comandi
+    ;-----------------
     
-    ; Stringhe di supporto
+    
+    ; STRINGHE DI SUPPORTO
     asterisco db "*$"
-    backspace db 8, ' ', 8, "$"   ; Sequenza per cancellare un carattere: indietro, spazio, indietro
+    backspace db 8, ' ', 8, "$" 
     
-    ; Credenziali valide
+    ; CREDENZIALI ALLO STARTUP
     valid_user db "admin$"
     valid_pwd  db "admin$"
     
-    ; Messaggi snake
+    ; MESSAGGI MINES
     mines_logo db "", 13, 10
                db "  _______ _________ _        _______  _______ ", 13, 10
                db " (       )\__   __/( (    /|(  ____ \(  ____ \", 13, 10
@@ -217,9 +224,28 @@ data segment
     pos_y db 1
     puntata dw 0
     vincita dw 0
-    contatore_caselle db 0
+    contatore_caselle db 0       
     caselle_aperte db 25 dup(0)  ; Mappa caselle aperte
-    mine db 25 dup(0)
+    mine db 25 dup(0)            ; Mappa mine
+    
+    
+    termina_msg db "     Grazie per aver usato TacOS!", 13, 10
+                db "", 13, 10
+                db "             /--\", 13, 10 
+                db "      _(\    |@@|", 13, 10
+                db "     (__/\__ \--/ __", 13, 10
+                db "        \___|----|  |   __", 13, 10
+                db "            \ }{ /\ )_ / _\", 13, 10
+                db "            /\__/\ \__O (__", 13, 10
+                db "           (--/\--)    \__/", 13, 10
+                db "           _)(  )(_", 13, 10
+                db "          `---''---`", 13, 10
+                db "", 13, 10
+                db "     Realizzato con cura da MxrcoDev", 13, 10
+                db " ", 13, 10 
+                db "        github.com/MxrcoDev/TacOS$", 13, 10
+                
+    areyousure  db "Sei sicuro di voler terminare il programma? (s / n)$"
     
     
     
@@ -255,11 +281,19 @@ start:
     
     xor si, si      ; Azzera SI per l'indice del buffer
     
+    
+    
+; /-------------------\    
+; |                   |
+; |   SEZIONE LOGIN   |
+; |                   |
+; \-------------------/ 
+   
 utente:
-    mov ah, 8       ; Lettura carattere senza echo
+    mov ah, 8       
     int 21h
     
-    ; Se il tasto premuto e' invio
+    ; Invio
     cmp al, 13
     je ottieni_utente
     
@@ -269,30 +303,31 @@ utente:
     
     ; Controlla se abbiamo raggiunto il limite del buffer
     cmp si, 19      
-    jae utente    ; Se si, ignora l'input
+    jae utente
     
-    ; Altrimenti, memorizza e mostra il carattere
+    ; Memorizza e mostra il carattere
     mov username[si], al
     inc si
     
-    mov dl, al      ; Mostra il carattere
+    mov dl, al
     mov ah, 2
     int 21h
     
     jmp utente
 
+; Handler per il backspace
 handler_utente:
-    ; Controlla se siamo all'inizio del buffer
+    ; Controlla se e' stato inserito almeno un carattere
     cmp si, 0
-    je utente    ; Se si, ignora il backspace
+    je utente    
     
-    ; Altrimenti, cancella l'ultimo carattere
+    ; Cancella l'ultimo carattere digitato
     lea dx, backspace
     mov ah, 9
     int 21h
     
     dec si          ; Decrementa l'indice del buffer
-    mov username[si], 0   ; Cancella il carattere dal buffer
+    mov username[si], 0   ; Cancella l'ultimo carattere dal buffer
     
     jmp utente
     
@@ -304,21 +339,18 @@ ottieni_utente:
     mov ah, 9
     int 21h
     
-    xor si, si      ; Azzera SI per il nuovo input
+    xor si, si
     
 pwd:
-    mov ah, 8   ; Input nascosto
+    mov ah, 8
     int 21h
     
-    ; Se il tasto premuto e' invio
     cmp al, 13
     je ottieni_pwd
     
-    ; Se il tasto premuto e' backspace
     cmp al, 8
     je handler_pwd
     
-    ; Controlla il limite del buffer
     cmp si, 19
     jae pwd
     
@@ -331,11 +363,9 @@ pwd:
     jmp pwd
     
 handler_pwd:
-    ; Controlla se siamo all'inizio del buffer
     cmp si, 0
     je pwd
     
-    ; Altrimenti, cancella l'ultimo carattere
     lea dx, backspace
     mov ah, 9
     int 21h
@@ -369,10 +399,19 @@ ottieni_pwd:
     mov ah, 9
     int 21h
     
-    xor si, si      ; Azzera SI per l'indice del buffer
+    xor si, si
     
-    jmp utente ; Ritorna all'inserimento del nome utente
-
+    jmp utente
+    
+    
+    
+    
+; /-------------------\    
+; |                   |
+; |    SEZIONE DOS    |
+; |                   |
+; \-------------------/
+ 
 main:
     call cls
     
@@ -392,118 +431,105 @@ scrivi_prompt:
     mov ah, 9
     int 21h
         
-    ; Stampa il prompt
     lea dx, prompt
     mov ah, 9
     int 21h
     
     xor si, si
+    
 prompt_cmd:
-    mov ah, 8       ; Lettura carattere senza echo
+    mov ah, 8       
     int 21h
     
-    ; Se il tasto premuto e' invio
     cmp al, 13
     je ottieni_cmd
     
-    ; Se il tasto premuto e' backspace
     cmp al, 8
     je handler_cmd
     
-    ; Controlla se abbiamo raggiunto il limite del buffer
     cmp si, 49      
-    jae prompt_cmd    ; Se si, ignora l'input
+    jae prompt_cmd
     
-    ; Altrimenti, memorizza e mostra il carattere
     mov cmd_buffer[si], al
     inc si
     
-    mov dl, al      ; Mostra il carattere
+    mov dl, al
     mov ah, 2
     int 21h
     
     jmp prompt_cmd
     
 handler_cmd:
-    ; Controlla se siamo all'inizio del buffer
     cmp si, 0
-    je prompt_cmd    ; Se si, ignora il backspace
+    je prompt_cmd
     
-    ; Altrimenti, cancella l'ultimo carattere
     lea dx, backspace
     mov ah, 9
     int 21h
     
-    dec si          ; Decrementa l'indice del buffer
-    mov cmd_buffer[si], 0   ; Cancella il carattere dal buffer
+    dec si
+    mov cmd_buffer[si], 0
     
     jmp prompt_cmd
 
 ottieni_cmd:
     mov cmd_buffer[si], 0
     
-    ; Verifica comando help
+    ; Comando help
     lea si, cmd_buffer
     lea di, help_cmd
     call compare_strings
     cmp ax, 1
     je comando_help
     
-    ; Verifica comando exit
+    ; Comando exit
     lea si, cmd_buffer
     lea di, exit_cmd
     call compare_strings
     cmp ax, 1
     je comando_exit
     
-    ; Verifica comando pwd
+    ; Comando pwd
     lea si, cmd_buffer
     lea di, pwd_cmd
     call compare_strings
     cmp ax, 1
     je comando_pwd 
     
-    ; Verifica comando pwd
+    ; Comando cls
     lea si, cmd_buffer
     lea di, cls_cmd
     call compare_strings
     cmp ax, 1
     je comando_cls
     
-    ; Verifica comando calc
+    ; Comando calc
     lea si, cmd_buffer
     lea di, calc_cmd
     call compare_strings
     cmp ax, 1
     je comando_calc
     
-    ; Verifica comando mines
+    ; Comando mines
     lea si, cmd_buffer
     lea di, mines_cmd
     call compare_strings
     cmp ax, 1
     je comando_mines
     
-    ; Verifica comando mkdir
-    ;lea si, cmd_buffer
-    ;lea di, mkdir_cmd
-    ;call compare_strings
-    ;cmp ax, 1
-    ;je comando_mkdir
+    ; Comando shutdown
+    lea si, cmd_buffer
+    lea di, shutdown_cmd
+    call compare_strings
+    cmp ax, 1
+    je termina_programma
     
-    ; Verifica comando cd
-    ;lea si, cmd_buffer
-    ;lea di, cd_cmd
-    ;call compare_strings
-    ;cmp ax, 1
-    ;je comando_cd
-    
-    ; Verifica comando dir
-    ;lea si, cmd_buffer
-    ;lea di, dir_cmd
-    ;call compare_strings
-    ;cmp ax, 1
-    ;je comando_dir
+    ; AGGIUNGI COMANDO
+    ; lea si, cmd_buffer
+    ; lea di, COMANDO
+    ; call compare_strings
+    ; cmp ax, 1
+    ; je termina_programma
     
     ; Comando non riconosciuto
     lea dx, sconosciuto
@@ -511,31 +537,34 @@ ottieni_cmd:
     int 21h
     jmp scrivi_prompt
 
+
+
+; /-------------------\    
+; |                   |
+; |  SEZIONE COMANDI  |
+; |                   |
+; \-------------------/ 
+
+; --- HELP ---
 comando_help:
-    
-    ; Mostra il messaggio di help e riscrivi il prompt
-    
     lea dx, help_msg
     mov ah, 9
     int 21h 
     jmp scrivi_prompt
 
+; --- EXIT ---
 comando_exit:
-    ; Pulisci lo schermo e ritorna al'inizio
     call cls
     jmp start
 
+; --- CLS ---
 comando_cls:
-    ; Ritorna alla schermata del terminale
     jmp main
 
-
-; --- GESTIONE SNAKE ---
+; --- MINES ---
 comando_mines:
-        ; Pulisci lo schermo
         call cls
         
-        ; Mostra il logo
         lea dx, mines_logo
         mov ah, 9
         int 21h
@@ -544,11 +573,10 @@ comando_mines:
         mov ah, 9
         int 21h
         
-        ; Attendi input iniziale
         mov ah, 8
         int 21h
         
-        ; Se CTRL+C, torna al main
+        ; CTRL+C
         cmp al, 3
         je main 
         
@@ -563,32 +591,26 @@ comando_mines:
         call reset_game
         
     mines_start:
-        ; Pulisci schermo
         call cls
         
-        ; Mostra i controlli
         lea dx, mines_logo
         mov ah, 9
         int 21h
         
-        ; Mostra saldo attuale
         lea dx, mines_saldo
         mov ah, 9
         int 21h
         
-        ; Mostra il saldo come numero
         xor ah, ah
         mov ax, saldo
         call mostra_numero
         
-        ; Chiedi puntata
         lea dx, mines_puntata
         mov ah, 9
         int 21h
         
-        ; Leggi puntata
+    ; leggi la puntata
     get_bet:
-        ; Leggi la puntata
         call leggi_puntata
         
         ; Verifica che la puntata non sia zero
@@ -604,18 +626,19 @@ comando_mines:
         mov saldo, bx
         
         jmp game_loop
-        
+    
+    ; --- LOGICA MINES ---    
     game_loop:
         call aggiorna_schermo
         
         mov ah, 8
         int 21h
         
-        cmp al, 13          ; Enter (cashout)
+        cmp al, 13          ; Invio (Cashout)
         je cashout
-        cmp al, 32          ; Spazio (rivela casella)
+        cmp al, 32          ; Spazio (Seleziona)
         je controlla_casella
-        cmp al, 3           ; CTRL+C (esci)
+        cmp al, 3           ; CTRL+C (Esci)
         je main
         
         cmp al, 119         ; W
@@ -654,7 +677,10 @@ comando_mines:
         jmp game_loop 
         
    controlla_casella:
-        ; Calcola indice
+        ; Calcola indice della casella
+        ;                                       
+        ; INDICE = (pos_y - 1) * 5 + (pos_x - 1)
+         
         mov al, pos_y
         dec al
         mov bl, 5
@@ -667,7 +693,7 @@ comando_mines:
         cmp caselle_aperte[bx], 1
         je game_loop
         
-        ; Segna casella come aperta
+        ; Segna come casella aperta
         mov caselle_aperte[bx], 1
         inc contatore_caselle
         
@@ -675,14 +701,13 @@ comando_mines:
         cmp mine[bx], 1
         je boom
         
-        ; Verifica vittoria (ogni 2 caselle)
+        ; Ogni due caselle, verifica vittoria
         mov al, contatore_caselle
         mov bl, 2
         div bl
         cmp ah, 0
         je win
         
-        ; Mostra messaggio vittoria
         jmp game_loop 
     
         win:
@@ -721,7 +746,7 @@ comando_mines:
         cmp al, 3
         je main
             
-        call reset_game
+        call reset_game    ; Ripristina gioco
         jmp mines_start    ; Torna all'inizio del gioco
         
     boom:
@@ -760,80 +785,78 @@ leggi_puntata proc
     xor bx, bx      ; Azzera puntata accumulata
     
 input_loop:
-    mov ah, 8       ; Leggi carattere senza echo
+    mov ah, 8
     int 21h
     
-    cmp al, 13      ; Se INVIO, termina input
+    cmp al, 1
     je fine_input
     
-    cmp al, 8       ; Se BACKSPACE
+    cmp al, 13
+    je fine_input
+    
+    cmp al, 3
+    je main
+    
+    cmp al, 8
     je gestisci_backspace
     
-    cmp al, '0'     ; Verifica se è un numero
+    ; I caratteri devono essere compresi tra 0 e 9
+    cmp al, '0'
     jb input_loop
     cmp al, '9'
     ja input_loop
     
-    ; Converti e accumula il numero
     sub al, '0'     ; Converti ASCII in numero
-    xor ah, ah      ; Pulisci AH
+    xor ah, ah
     
-    ; Salva il carattere originale
-    push ax         ; Salva il valore numerico
+    push ax
     
     ; Moltiplica la puntata accumulata per 10
+    ; In modo da scorrere per aggiungere una nuova cifra
     mov ax, bx
     mov cx, 10
     mul cx
     
-    ; Recupera il valore numerico
     pop dx          
-    add ax, dx      ; Aggiungi la nuova cifra
+    add ax, dx
     
     cmp ax, 65535   ; Verifica overflow
     ja input_loop
     
     ; Verifica se supera il saldo
-    cmp ax, word ptr [saldo]
+    cmp ax, word ptr [saldo] ; Si usa per verificare l'ampiezza del dato
     ja input_loop
     
-    ; Se arriviamo qui, il numero è valido
     mov bx, ax      ; Aggiorna la puntata accumulata
     
-    ; Mostra il carattere originale
-    add dl, '0'     ; Converti in ASCII
-    mov ah, 2       ; Stampa carattere
+    ; Mostra il carattere
+    add dl, '0'     
+    mov ah, 2      
     int 21h
     
     jmp input_loop
     
 gestisci_backspace:
-    ; Se non ci sono numeri da cancellare
     cmp bx, 0
     je input_loop
     
-    ; Cancella carattere dallo schermo
-    mov dl, 8       ; Backspace
-    mov ah, 2
-    int 21h
-    mov dl, ' '     ; Spazio
-    mov ah, 2
-    int 21h
-    mov dl, 8       ; Backspace di nuovo
-    mov ah, 2
+    lea dx, backspace
+    mov ah, 9
     int 21h
     
-    ; Rimuovi l'ultima cifra dal numero
+    ; Rimuovi l'ultima cifra
+    ; dividendo per 10
+    ; (i numeri sono int)
     mov ax, bx
     mov cx, 10
     xor dx, dx
-    div cx          ; Divide per 10
-    mov bx, ax      ; Salva il risultato
+    div cx
+    mov bx, ax      
     
     jmp input_loop
     
 fine_input:
-    mov ax, bx      ; Metti il risultato in AX
+    mov ax, bx
     
     pop dx
     pop cx
@@ -841,41 +864,46 @@ fine_input:
     ret
 leggi_puntata endp
 
+
 reset_game proc
     push ax
     push cx
     push di
     
+    ; Resetta il contatore e la vincita
     mov contatore_caselle, 0
     mov vincita, 0
     
-    ; Reset arrays
     mov cx, 25
     mov di, 0
-clear_arrays:
+    
+clear_arrays: 
+
+    ; resetta gli array
     mov caselle_aperte[di], 0
     mov mine[di], 0
     inc di
     loop clear_arrays
     
     ; Posiziona mine casuali (3 mine)
-    mov cx, 3              ; Vogliamo posizionare 3 mine
+    mov cx, 3
+    
 place_mine:
     push cx
     
     ; Genera numero casuale tra 0 e 24
+    
     mov ah, 00h           ; Interrupt per ottenere il timer
-    int 1Ah              ; DX contiene il conteggio del timer
+    int 1Ah               ; DX contiene il conteggio del timer
     mov ax, dx
     mov dx, 0
     mov bx, 25           ; Dividi per 25 per ottenere un numero tra 0 e 24
     div bx
-    ; Il resto è in DX
     
-    ; Verifica se c'è già una mina in quella posizione
+    ; Verifica se c'e' gia' una mina in quella posizione
     mov di, dx
     cmp mine[di], 1
-    je skip_mine         ; Se c'e' gia' una mina, riprova
+    je skip_mine
     
     ; Posiziona la mina
     mov mine[di], 1
@@ -900,34 +928,30 @@ aggiorna_schermo proc
     push cx
     push dx
         
-        ; Pulisci schermo
-        mov ax, 0003h
-        int 10h
+    call cls
         
-        ; Disegna campo base
-        mov ah, 09h
-        lea dx, mines_campo
-        int 21h 
+    mov ah, 09h
+    lea dx, mines_campo
+    int 21h 
         
-        ; Mostra saldo e puntata attuali
-        lea dx, mines_saldo
-        mov ah, 9
-        int 21h
+    lea dx, mines_saldo
+    mov ah, 9
+    int 21h
         
-        mov ax, saldo
-        call mostra_numero
+    mov ax, saldo
+    call mostra_numero
         
-        ; Mostra puntata corrente
-        mov ah, 9
-        lea dx, mines_vincita
-        int 21h
+    mov ah, 9
+    lea dx, mines_vincita
+    int 21h
         
-        mov ax, vincita
-        call mostra_numero
+    mov ax, vincita
+    call mostra_numero
         
-        ; Disegna caselle aperte
-        mov cx, 25        ; Numero totale di caselle (5x5)
-        mov di, 0         ; Indice dell'array caselle_aperte
+    ; Disegna caselle
+    mov cx, 25        ; Numero totale di caselle (5x5)
+    mov di, 0         ; Indice dell'array caselle_aperte
+    
     draw_cells:
         ; Calcola x,y
         mov ax, di
@@ -939,15 +963,14 @@ aggiorna_schermo proc
         add dh, 2        ; Offset per allineamento
         mov dl, ah       ; Colonna (x)
         add dl, 6        ; Offset per allineamento
-        mov bh, 0        ; Pagina video
+        mov bh, 0        
         mov ah, 02h
         int 10h
         
-        ; Verifica se la casella è aperta
+        ; Verifica se la casella e' aperta
         cmp caselle_aperte[di], 1
         jne skip_x
         
-        ; Disegna X se la casella è aperta
         mov ah, 02h
         mov dl, 'X'
         int 21h
@@ -970,33 +993,33 @@ aggiorna_schermo proc
         pop bx
         pop ax
         ret
-aggiorna_schermo endp      
-; -----------------------------------
-
-; --- GESTIONE DELLA CALCOLATRICE ---
-comando_calc:
-    ; Pulisci lo schermo 
+aggiorna_schermo endp
+              
+              
+              
+; /-------------------\    
+; |                   |
+; |   SEZIONE CALC    |
+; |                   |
+; \-------------------/
+ 
+comando_calc: 
     call cls
     push di
     
 calc_menu:
-    ; Mostra il messaggio 
     lea dx, calc_msg
     mov ah, 9
     int 21h
     
-    ; Attendi l'input
     mov ah, 8
     int 21h
     
-    ; Se viene inserito CTRL+C, esci dalla calcolatrice
     cmp al, 3
     je main
     
-    ; Converte il carattere ASCII in numero
     sub al, '0'
     
-    ; Salta all'operazione corrispondente
     cmp al, 1
     je somma
     cmp al, 2
@@ -1012,8 +1035,7 @@ calc_menu:
     cmp al, 7
     je logaritmo
     
-    ; Se l'input non è valido, torna al main
-    jmp main
+    jmp comando_calc
 
 somma:
     ; Chiedi primo numero
@@ -1021,7 +1043,6 @@ somma:
     mov ah, 9
     int 21h
     
-    ; Leggi primo numero
     call leggi_numero
     mov num1, ax
     
@@ -1030,7 +1051,6 @@ somma:
     mov ah, 9
     int 21h
     
-    ; Leggi secondo numero
     call leggi_numero
     mov num2, ax
     
@@ -1059,7 +1079,6 @@ sottrazione:
     mov ah, 9
     int 21h
     
-    ; Leggi primo numero
     call leggi_numero
     mov num1, ax
     
@@ -1068,7 +1087,6 @@ sottrazione:
     mov ah, 9
     int 21h
     
-    ; Leggi secondo numero
     call leggi_numero
     mov num2, ax
     
@@ -1085,7 +1103,6 @@ sottrazione:
     mov ax, result
     call mostra_numero
     
-    ; Attendi un tasto
     mov ah, 7
     int 21h
     
@@ -1097,7 +1114,6 @@ moltiplicazione:
     mov ah, 9
     int 21h
     
-    ; Leggi primo numero
     call leggi_numero
     mov num1, ax
     
@@ -1106,7 +1122,6 @@ moltiplicazione:
     mov ah, 9
     int 21h
     
-    ; Leggi secondo numero
     call leggi_numero
     mov num2, ax
     
@@ -1124,7 +1139,6 @@ moltiplicazione:
     mov ax, result
     call mostra_numero
     
-    ; Attendi un tasto
     mov ah, 7
     int 21h
     
@@ -1136,7 +1150,6 @@ divisione:
     mov ah, 9
     int 21h
     
-    ; Leggi primo numero
     call leggi_numero
     mov num1, ax
     
@@ -1145,7 +1158,6 @@ divisione:
     mov ah, 9
     int 21h
     
-    ; Leggi secondo numero
     call leggi_numero
     mov num2, ax
     
@@ -1167,7 +1179,6 @@ divisione:
     mov ax, result
     call mostra_numero
     
-    ; Attendi un tasto
     mov ah, 7
     int 21h
     
@@ -1178,7 +1189,6 @@ errore_div_zero:
     mov ah, 9
     int 21h
     
-    ; Attendi un tasto
     mov ah, 7
     int 21h
     
@@ -1190,7 +1200,6 @@ potenza:
     mov ah, 9
     int 21h
     
-    ; Leggi base
     call leggi_numero
     mov num1, ax
     
@@ -1199,12 +1208,11 @@ potenza:
     mov ah, 9
     int 21h
     
-    ; Leggi esponente
     call leggi_numero
     
     ; Verifica che l'esponente sia positivo
     test ax, ax
-    js errore_esp_neg
+    js errore_neg
     
     mov num2, ax
     
@@ -1231,45 +1239,49 @@ fine_potenza:
     mov ax, result
     call mostra_numero
     
-    ; Attendi un tasto
     mov ah, 7
     int 21h
     
     jmp comando_calc
 
 radice:
-    ; Chiedi numero
+    ; Chiedi l'argomento della radice
     lea dx, num1_msg
     mov ah, 9
     int 21h
     
-    ; Leggi numero
     call leggi_numero
     
     ; Verifica che il numero sia positivo
     test ax, ax
-    js errore_esp_neg
+    js errore_neg
     
     mov num1, ax
     
     ; Calcola radice quadrata usando il metodo babilonese
-    mov ax, num1    ; Numero di cui calcolare la radice
-    mov bx, ax      ; Prima approssimazione = n
-    shr bx, 1       ; Dividi per 2 per migliorare la prima approssimazione
+    ;
+    ; Xn+1 = (Xn + S/Xn) / 2 
+    ;
+    ; Xn => Stima della radice
+    ; S  => Numero di cui calcolare la radice
+    
+    mov ax, num1    ; S
+    mov bx, ax      ; Xn
+    shr bx, 1       ; /2
     
     mov cx, 10      ; Numero di iterazioni
     
 radice_loop:
-    push cx         ; Salva il contatore
+    push cx         
     
-    mov cx, bx      ; Salva l'approssimazione corrente
+    mov cx, bx      
     
-    mov ax, num1    ; ax = n
-    mov dx, 0       ; Prepara la divisione
-    div bx          ; ax = n/x
+    mov ax, num1    ; S
+    mov dx, 0       
+    div bx          ; Xn
     
-    add ax, cx      ; ax = x + n/x
-    shr ax, 1       ; ax = (x + n/x)/2
+    add ax, cx      ; Xn + S/Xn
+    shr ax, 1       ; /2
     
     mov bx, ax      ; Aggiorna l'approssimazione
     
@@ -1286,29 +1298,30 @@ radice_loop:
     mov ax, result
     call mostra_numero
     
-    ; Attendi un tasto
     mov ah, 7
     int 21h
     
     jmp comando_calc
 
 logaritmo:
-    ; Chiedi numero
+    ; Chiedi l'argomento del logaritmo
     lea dx, num1_msg
     mov ah, 9
     int 21h
     
-    ; Leggi numero
     call leggi_numero
     
     ; Verifica che il numero sia positivo
     test ax, ax
-    js errore_esp_neg
+    js errore_neg
     
     mov num1, ax
     
-    ; Calcola logaritmo naturale approssimato
-    mov cx, 0       ; Contatore
+    ; Calcola logaritmo in base 2 approssimato
+    ; 
+    ; Xn+1 = Xn / 2
+    
+    mov cx, 0       
     mov ax, num1
     
 logaritmo_loop:
@@ -1329,14 +1342,15 @@ fine_logaritmo:
     mov ax, result
     call mostra_numero
     
-    ; Attendi un tasto
     mov ah, 7
     int 21h
     
     jmp comando_calc 
 
-errore_esp_neg:
-    lea dx, espneg_msg
+; L'argomento della radice o del logaritmo oppure l'esponente 
+; della potenza e' negativo
+errore_neg:
+    lea dx, neg_msg
     mov ah, 9
     int 21h
     
@@ -1357,30 +1371,29 @@ leggi_numero proc
     mov cx, 10      ; Moltiplicatore
     xor di, di      ; Flag per il segno (0 = positivo, 1 = negativo)
     
-    xor si, si      ; Azzeriamo il contatore
+    xor si, si      ; Azzeriamo il contatore per il funzionamento del backspace
     
-    ; Leggi primo carattere per verificare se è un segno meno
     mov ah, 1
     int 21h
     
-    cmp al, '-'     ; Controlla se è un segno meno
+    cmp al, '-'
     jne non_negativo
     mov di, 1       ; Imposta flag negativo
     jmp leggi_cifra
     
 non_negativo:
-    cmp al, 13      ; Se e' invio, termina
+    cmp al, 13      
     je fine_lettura
     
-    cmp al, 8       ; Se e' backspace, stampa spazio e ricomincia la lettura
-    je first_back
+    cmp al, 8     
+    je first_back   ; Se il primo numero inserito e' un backspace
     
     sub al, '0'     ; Converti da ASCII a numero
     xor ah, ah      ; Pulisci AH
     push ax         ; Salva cifra
     
     mov ax, bx      ; Moltiplica numero corrente per 10
-    mul cx          ; AX = AX * CX
+    mul cx          ; in modo da farlo shiftare a destra
     mov bx, ax
     
     pop ax          ; Recupera cifra
@@ -1393,28 +1406,28 @@ leggi_cifra:
     mov ah, 8
     int 21h
     
-    cmp al, 13      ; Se ENTER, termina
+    cmp al, 13      
     je fine_lettura 
     
-    cmp al, 8       ; Se e' backspace
+    cmp al, 8       
     je handler_calc
     
-    inc si          ; Incrementa il contatore dei caratteri
+    inc si          
     
     mov dl, al
     mov ah, 2
     int 21h
     
-    sub al, '0'     ; Converti da ASCII a numero
-    xor ah, ah      ; Pulisci AH
-    push ax         ; Salva cifra
+    sub al, '0'     
+    xor ah, ah      
+    push ax         
     
-    mov ax, bx      ; Moltiplica numero corrente per 10
-    mul cx          ; AX = AX * CX
+    mov ax, bx      
+    mul cx          
     mov bx, ax
     
-    pop ax          ; Recupera cifra
-    add bx, ax      ; Aggiungi cifra al numero
+    pop ax          
+    add bx, ax      
     
     jmp leggi_cifra
 
@@ -1445,10 +1458,10 @@ first_back:
 fine_lettura:
     mov ax, bx      ; Sposta risultato in AX
     
-    ; Se il flag negativo è impostato, nega il numero usando NEG
+    ; Se il flag negativo e' impostato, nega il numero usando NEG
     cmp di, 1
     jne fine_proc
-    neg ax          ; Converte in negativo
+    neg ax          
     
 fine_proc:
     pop dx
@@ -1458,7 +1471,7 @@ fine_proc:
     ret
 leggi_numero endp
 
-; Procedure per mostrare un numero con supporto numeri negativi
+; Procedure per mostrare un numero in output
 mostra_numero proc
     push ax
     push bx
@@ -1468,17 +1481,17 @@ mostra_numero proc
     mov bx, 10      ; Divisore
     xor cx, cx      ; Contatore cifre
     
-    ; Controlla se il numero è negativo
+    ; Controlla se il numero e' negativo
     test ax, ax
     jns non_stampa_meno
     
-    ; Stampa il segno meno e nega il numero
+    ; Stampa il segno meno e fai tornare positivo il numero
     push ax
     mov dl, '-'
     mov ah, 2
     int 21h
     pop ax
-    neg ax          ; Rendi il numero positivo usando NEG
+    neg ax          
     
 non_stampa_meno:
     ; Gestisci caso speciale numero = 0
@@ -1492,16 +1505,16 @@ dividi_numero:
     cmp ax, 0
     je mostra_cifre
     
-    cwd             ; Converti word in double word (AX -> DX:AX)
+    cwd             
     idiv bx         ; Divisione con segno
-    push dx         ; Salva resto (cifra)
+    push dx         
     inc cx          ; Incrementa contatore
     jmp dividi_numero
     
 mostra_cifre:
-    pop dx          ; Recupera cifra
-    add dl, '0'     ; Converti in ASCII
-    mov ah, 2       ; Stampa carattere
+    pop dx          
+    add dl, '0'     
+    mov ah, 2       
     int 21h
     loop mostra_cifre
     
@@ -1518,11 +1531,17 @@ mostra_cifre:
     pop ax
     ret
 mostra_numero endp 
-    
-    
-; --- GESTIONE DEL CAMBIO PASSWORD ---
+  
+  
+  
+  
+; /-------------------\    
+; |                   |
+; |    SEZIONE PWD    |
+; |                   |
+; \-------------------/ 
+
 comando_pwd:
-    ; Chiedi vecchia password
     lea dx, old_pwd_msg
     mov ah, 9
     int 21h
@@ -1714,13 +1733,39 @@ pwd_mismatch:
     int 21h
     jmp scrivi_prompt
          
-termina_programma:
+termina_programma:    
+    call cls
+    
+    lea dx, areyousure
+    mov ah, 9
+    int 21h
+    
+    mov ah, 8
+    int 21h
+    
+    cmp al, 115
+    jne main
+    
+    call cls
+    
+    lea dx, termina_msg
+    mov ah, 9
+    int 21h
+    
+    xor dx, dx
+    xor ax, ax
+    
     mov ax, 4c00h
     int 21h
 
 
-; --- ALTRE SUBROUTINES ---    
-; Subroutine per verificare le credenziali
+; /-------------------\    
+; |                   |
+; |   SEZIONE PROC    |
+; |                   |
+; \-------------------/ 
+    
+; --- CONTROLLA CREDENZIALI ---
 controlla_credenziali proc
     mov si, 0
     
@@ -1765,7 +1810,7 @@ controlla_credenziali proc
     
 controlla_credenziali endp
     
-; Subroutine per pulire lo schermo
+; --- PULISCI SCHERMO ---
 cls proc
     mov ax, 0600h
     mov bh, 07h
@@ -1780,7 +1825,7 @@ cls proc
     ret
 cls endp
 
-; Subroutine per confrontare stringhe
+; --- CONFRONTA STRINGHE ---
 compare_strings proc
     push cx
     push si
@@ -1790,7 +1835,7 @@ compare_loop:
     mov al, [si]
     mov bl, [di]
     
-    ; Se entrambi i caratteri sono 0 o spazio, è un match
+    ; Se entrambi i caratteri sono 0 o spazio, e' un match
     cmp bl, 0
     je check_end_or_space
     
@@ -1803,7 +1848,7 @@ compare_loop:
     jmp compare_loop
     
 check_end_or_space:
-    ; Verifica se il carattere corrente è uno spazio o fine stringa
+    ; Verifica se il carattere corrente e' uno spazio o fine stringa
     cmp al, 0
     je strings_equal
     cmp al, ' '
@@ -1821,6 +1866,7 @@ end_compare:
     pop si
     pop cx
     ret
-compare_strings endp
+compare_strings endp 
+
 ends
 end start
