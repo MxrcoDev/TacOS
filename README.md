@@ -18,6 +18,7 @@ Welcome to **TacOS**! 🎉 A small operating system simulation written in **Asse
 | `cls` | Clears the screen | 
 | `calc` | Opens the calculator | 
 | `mines` | Opens the Mines game |
+| `shutdown` | Shutdowns the OS |
 
 ## 🧮 Calculator 
 The calculator supports operations with positive and negative numbers: 
